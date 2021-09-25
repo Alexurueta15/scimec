@@ -10,15 +10,11 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 public class UserWorkerCreateDTO {
 
-    @NotEmpty
-    private String username;
+    @NotEmpty private String username;
 
-    @NotEmpty
-    private String password;
+    @NotEmpty private String password;
 
-    @JsonIgnore
-    private String role = "Worker";
+    @JsonIgnore private String role = "Worker";
 
-    @JsonIgnore
-    private boolean enabled = true;
+    @JsonIgnore private boolean enabled = true;
 }

@@ -10,7 +10,6 @@ import mx.edu.utez.scimec.repository.PresentationRepository;
 import mx.edu.utez.scimec.repository.UserRepository;
 import mx.edu.utez.scimec.repository.WorkerRepository;
 import mx.edu.utez.scimec.util.DTO;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,7 +97,7 @@ public class AdminController {
     @PutMapping("period")
     public SuccessMessage updatePeriod(@DTO(PeriodUpdateDTO.class) Period period) {
         periodRepository.save(period);
-        return new SuccessMessage("Periodo registrado");
+        return new SuccessMessage("Periodo actualizado");
     }
 
     @GetMapping("period/active")
