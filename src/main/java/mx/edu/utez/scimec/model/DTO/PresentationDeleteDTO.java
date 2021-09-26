@@ -8,6 +8,6 @@ import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
-public class WorkerDeleteDTO {
+public class PresentationDeleteDTO {
     @Id @NotEmpty private String id;
 }

@@ -2,10 +2,7 @@ package mx.edu.utez.scimec.model.DTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -13,15 +10,11 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 public class UserWorkerCreateDTO {
 
-    @NotEmpty
-    private String username;
+    @NotEmpty private String username;
 
-    @NotEmpty
-    private String password;
+    @NotEmpty private String password;
 
-    @JsonIgnore
-    private String role = "Worker";
+    @JsonIgnore private String role = "Worker";
 
-    @JsonIgnore
-    private boolean enabled = true;
+    @JsonIgnore private boolean enabled = true;
 }
