@@ -7,15 +7,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
 
 @Getter
 @Setter
-public class WorkerCreateDTO {
-
+public class StudentCreateDTO {
     @Valid
     @NotNull
-    private UserWorkerCreateDTO user;
+    private UserStudentCreateDTO user;
 
     @NotEmpty
     private String name;
@@ -23,7 +22,7 @@ public class WorkerCreateDTO {
     @NotEmpty
     private String lastname;
 
-    @NotEmpty
+    @NotNull
     private String secondLastname;
 
     @Email
@@ -35,16 +34,26 @@ public class WorkerCreateDTO {
     private String institutionalEmail;
 
     @NotEmpty
-    private String PID;
+    private String gender;
+
+    @NotNull
+    private LocalDate birthDate;
 
     @NotEmpty
-    @Pattern(regexp = "^\\d+$", message = "Solo números")
     private String SSN;
 
-    @NotEmpty
-    @Pattern(regexp = "^\\d+$", message = "Solo números")
-    private String phone;
+    @Valid
+    @NotNull
+    private ReferenceStudentCreateDTO reference;
 
     @NotEmpty
-    private String position;
+    private String disability;
+
+    @NotEmpty
+    private String allergy;
+
+    @NotEmpty
+    private String chronic;
+
+    private String chronicProof = "";
 }

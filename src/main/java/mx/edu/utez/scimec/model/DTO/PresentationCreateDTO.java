@@ -8,5 +8,6 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 public class PresentationCreateDTO {
-    @NotEmpty private String image;
+    @NotEmpty
+    private String image;
 }

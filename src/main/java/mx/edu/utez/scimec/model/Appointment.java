@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
 public class Appointment {
     @Id
     private String id;
-    @DBRef
-    private Period period;
     private LocalDateTime dateTime;
     @DBRef
     private Student student;

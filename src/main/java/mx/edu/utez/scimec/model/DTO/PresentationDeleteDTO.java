@@ -9,5 +9,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 public class PresentationDeleteDTO {
-    @Id @NotEmpty private String id;
+    @Id
+    @NotEmpty
+    private String id;
 }

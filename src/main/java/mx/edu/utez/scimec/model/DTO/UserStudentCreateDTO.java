@@ -8,7 +8,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
-public class UserWorkerCreateDTO {
+public class UserStudentCreateDTO {
 
     @NotEmpty
     private String username;
@@ -17,7 +17,7 @@ public class UserWorkerCreateDTO {
     private String password;
 
     @JsonIgnore
-    private String role = "Worker";
+    private String role = "Student";
 
     @JsonIgnore
     private boolean enabled = true;

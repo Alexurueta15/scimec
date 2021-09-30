@@ -1,18 +1,21 @@
 package mx.edu.utez.scimec.model.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utez.scimec.model.Period;
 
+import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Getter
 @Setter
-public class PeriodCreateDTO {
+public class AnnouncementUpdateDTO {
+    @Id
+    @NotEmpty
+    private String id;
 
     @NotEmpty
     private String name;
@@ -29,10 +32,9 @@ public class PeriodCreateDTO {
     @NotNull
     private LocalTime finalTime;
 
-    @NotNull
-    private List<LocalDate> holidays;
+    @NotEmpty
+    private String description;
 
-    @JsonIgnore
-    private Boolean enabled = true;
-
+    @NotEmpty
+    private String image;
 }

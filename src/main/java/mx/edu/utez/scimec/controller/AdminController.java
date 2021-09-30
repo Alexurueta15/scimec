@@ -1,18 +1,17 @@
 package mx.edu.utez.scimec.controller;
 
 import mx.edu.utez.scimec.Bean.SuccessMessage;
+import mx.edu.utez.scimec.model.Announcement;
 import mx.edu.utez.scimec.model.DTO.*;
 import mx.edu.utez.scimec.model.Period;
 import mx.edu.utez.scimec.model.Presentation;
 import mx.edu.utez.scimec.model.Worker;
-import mx.edu.utez.scimec.repository.PeriodRepository;
-import mx.edu.utez.scimec.repository.PresentationRepository;
-import mx.edu.utez.scimec.repository.UserRepository;
-import mx.edu.utez.scimec.repository.WorkerRepository;
+import mx.edu.utez.scimec.repository.*;
 import mx.edu.utez.scimec.util.DTO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RequestMapping("/admin/")
@@ -24,15 +23,17 @@ public class AdminController {
     private final UserRepository userRepository;
     private final PresentationRepository presentationRepository;
     private final PeriodRepository periodRepository;
+    private final AnnouncementRepository announcementRepository;
 
     public AdminController(BCryptPasswordEncoder bCryptPasswordEncoder, WorkerRepository workerRepository,
                            UserRepository userRepository, PresentationRepository presentationRepository,
-                           PeriodRepository periodRepository) {
+                           PeriodRepository periodRepository, AnnouncementRepository announcementRepository) {
         this.workerRepository = workerRepository;
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.presentationRepository = presentationRepository;
         this.periodRepository = periodRepository;
+        this.announcementRepository = announcementRepository;
     }
 
     //CRUD WORKER
@@ -72,8 +73,8 @@ public class AdminController {
     }
 
     @DeleteMapping("presentation")
-    public SuccessMessage deletePresentation(@DTO(PresentationDeleteDTO.class) Presentation presentation) {
-        presentationRepository.delete(presentation);
+    public SuccessMessage deletePresentation(@RequestBody @NotEmpty String id) {
+        if (presentationRepository.existsById(id)) presentationRepository.deleteById(id);
         return new SuccessMessage("Imagen de presentación eliminada");
     }
 
@@ -86,7 +87,7 @@ public class AdminController {
     @PostMapping("period")
     public SuccessMessage savePeriod(@DTO(PeriodCreateDTO.class) Period period) {
         Period prevPeriodActive = periodRepository.findFirstByEnabledTrue();
-        if (prevPeriodActive != null){
+        if (prevPeriodActive != null) {
             prevPeriodActive.setEnabled(false);
             periodRepository.save(prevPeriodActive);
         }
@@ -106,7 +107,26 @@ public class AdminController {
     }
 
     @GetMapping("period")
-    public List<Period> findAll(){
+    public List<Period> findAll() {
         return periodRepository.findAll();
+    }
+
+    //Announcement
+    @PostMapping("announcement")
+    public SuccessMessage saveAnnouncement(@DTO(AnnouncementCreateDTO.class)Announcement announcement){
+        announcement.setPeriod(periodRepository.findFirstByEnabledTrue());
+        announcementRepository.save(announcement);
+        return new SuccessMessage("Convocatoria registrada");
+    }
+
+    @PutMapping("announcement")
+    public SuccessMessage updateAnnouncement(@DTO(AnnouncementUpdateDTO.class)Announcement announcement){
+        announcementRepository.save(announcement);
+        return new SuccessMessage("Convocatoria actualizada");
+    }
+
+    @GetMapping("announcement")
+    public List<Announcement> findAllAnnouncement(){
+        return announcementRepository.findAll();
     }
 }

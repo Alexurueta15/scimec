@@ -28,6 +28,7 @@ public class Student {
     private String disability;
     private String allergy;
     private String chronic;
+    private String chronicProof;
 
     public String getFullname() {
         return name + " " + lastname + " " + secondLastname;
