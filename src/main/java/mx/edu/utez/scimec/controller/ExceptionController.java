@@ -52,10 +52,10 @@ public class ExceptionController {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMessage notBodyException(HttpMessageNotReadableException ex) {
+    public ErrorMessage notBodyException() {
         return new ErrorMessage("La solicitud no puede procesarse, posiblemente se deba a: " +
-                "1.La solicitud no tiene cuerpo 2. los datos de los campos son inválidos para su tipo de datoel cuerpo" +
-                "3. La solicitud no es de tipo application/json");
+                "1.La solicitud no tiene cuerpo 2. los datos de los campos son inválidos para su tipo de dato" +
+                "3. El cuerpo de la solicitud no es de tipo application/json");
     }
 
     @ExceptionHandler(Exception.class)
