@@ -51,4 +51,9 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
 }

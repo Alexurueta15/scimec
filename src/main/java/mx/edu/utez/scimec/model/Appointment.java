@@ -1,5 +1,6 @@
 package mx.edu.utez.scimec.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Document
 @Getter
 @Setter
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class Appointment {
     @Id
     private String id;
@@ -19,6 +21,7 @@ public class Appointment {
     private Student student;
     private String enrollment;
     private String division;
+    private String career;
     private String group;
     private String quarter;
     private String mentorFullName;

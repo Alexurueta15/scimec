@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,12 @@ public class ExceptionController {
         return new ErrorMessage("La solicitud no puede procesarse, posiblemente se deba a: " +
                 "1.La solicitud no tiene cuerpo 2. los datos de los campos son inválidos para su tipo de dato" +
                 "3. El cuerpo de la solicitud no es de tipo application/json");
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public ErrorMessage EmailException() {
+        return new ErrorMessage("Ocurrió un problema al enviar el correo de confirmación");
     }
 
     @ExceptionHandler(Exception.class)

@@ -39,8 +39,8 @@ public class Catalog implements CommandLineRunner {
             userRepository.save(defaultUser);
         }
         //obtención de casillas disponibles a partir de hora inicio y hora fin ingresando unidad de duración de citas
-        /*
-        * long durationUnit = 30;
+
+        /*long durationUnit = 30;
         LocalTime startTime = LocalTime.parse("13:30");
         LocalTime finalTime = LocalTime.parse("16:00");
         List<LocalTime> lapses = new ArrayList<>();
