@@ -69,11 +69,12 @@ public class StudentController {
                 !date.matches("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
                 ? LocalDate.now() : LocalDate.parse(date);
         Period period = periodRepository.findFirstByEnabledTrue();
+        List<LocalTime> lapses = new ArrayList<>();
+        if (period.getHolidays().contains(localDate)) return lapses;
         LocalTime startTime = period.getStartTime();
         LocalTime finalTime = period.getFinalTime();
         int durationUnit = 30;
         int nLapses = (int) (startTime.until(finalTime, ChronoUnit.MINUTES) / durationUnit);
-        List<LocalTime> lapses = new ArrayList<>();
         lapses.add(startTime);
         for (int i = 0; i < nLapses; i++) {
             lapses.add(lapses.get(i).plus(durationUnit, ChronoUnit.MINUTES));
