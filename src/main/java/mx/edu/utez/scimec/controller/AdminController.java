@@ -1,6 +1,5 @@
 package mx.edu.utez.scimec.controller;
 
-import com.sun.deploy.net.HttpResponse;
 import mx.edu.utez.scimec.Bean.SuccessMessage;
 import mx.edu.utez.scimec.model.Announcement;
 import mx.edu.utez.scimec.model.DTO.*;
@@ -13,9 +12,7 @@ import mx.edu.utez.scimec.util.DTO;
 import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RequestMapping("/admin/")
@@ -80,8 +77,8 @@ public class AdminController {
     }
 
     @DeleteMapping("presentation")
-    public SuccessMessage deletePresentation(@RequestBody @NotEmpty String id) {
-        if (presentationRepository.existsById(id)) presentationRepository.deleteById(id);
+    public SuccessMessage deletePresentation(@DTO(PresentationDeleteDTO.class) Presentation presentation) {
+        if (presentationRepository.existsById(presentation.getId())) presentationRepository.deleteById(presentation.getId());
         return new SuccessMessage("Imagen de presentación eliminada");
     }
 
