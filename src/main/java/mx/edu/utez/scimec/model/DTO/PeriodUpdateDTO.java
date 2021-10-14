@@ -19,6 +19,9 @@ public class PeriodUpdateDTO {
     @NotEmpty
     private String id;
 
+    @NotEmpty
+    private String name;
+
     @NotNull
     private LocalDate startDate;
 
