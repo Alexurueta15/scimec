@@ -3,8 +3,10 @@ package mx.edu.utez.scimec.controller;
 import mx.edu.utez.scimec.Bean.SuccessMessage;
 import mx.edu.utez.scimec.model.Announcement;
 import mx.edu.utez.scimec.model.DTO.StudentCreateDTO;
+import mx.edu.utez.scimec.model.Presentation;
 import mx.edu.utez.scimec.model.Student;
 import mx.edu.utez.scimec.repository.AnnouncementRepository;
+import mx.edu.utez.scimec.repository.PresentationRepository;
 import mx.edu.utez.scimec.repository.StudentRepository;
 import mx.edu.utez.scimec.repository.UserRepository;
 import mx.edu.utez.scimec.util.DTO;
@@ -23,16 +25,20 @@ public class PublicController {
     private final StudentRepository studentRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AnnouncementRepository announcementRepository;
+    private final PresentationRepository presentationRepository;
 
     public PublicController(UserRepository userRepository, StudentRepository studentRepository,
-                            BCryptPasswordEncoder bCryptPasswordEncoder, AnnouncementRepository announcementRepository) {
+                            BCryptPasswordEncoder bCryptPasswordEncoder, AnnouncementRepository announcementRepository,
+                            PresentationRepository presentationRepository) {
         this.userRepository = userRepository;
         this.studentRepository = studentRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.announcementRepository = announcementRepository;
+        this.presentationRepository = presentationRepository;
     }
 
 
+    //student
     @PostMapping("student")
     public SuccessMessage saveStudent(@DTO(StudentCreateDTO.class)Student student){
         student.getUser().setPassword(bCryptPasswordEncoder.encode(student.getUser().getPassword()));
@@ -41,8 +47,15 @@ public class PublicController {
         return new SuccessMessage("Estudiante registrado");
     }
 
+    //announcement
     @GetMapping("announcement")
     public List<Announcement> findAllAnnouncement() {
         return announcementRepository.findAll();
+    }
+
+    //presentation images
+    @GetMapping("presentation")
+    public List<Presentation> findAllPresentation() {
+        return presentationRepository.findAll();
     }
 }
