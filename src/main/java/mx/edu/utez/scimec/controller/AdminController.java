@@ -10,8 +10,11 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RequestMapping("/admin/")
@@ -147,18 +150,19 @@ public class AdminController {
     }
 
     @GetMapping("appointment")
-    public List<Appointment> findAllAppointment(@RequestParam(name = "startDate", defaultValue = "") String startDate,
-                                                @RequestParam(name = "finalDate", defaultValue = "") String finalDate) {
+    public List<Appointment> findAllAppointment(@Valid @RequestBody AppointmentListQueryDTO dateRange) {
 
-        return appointmentRepository.findAllByDateTime(LocalDate.parse(startDate),LocalDate.parse(finalDate));
+        return appointmentRepository.findAllByDateTime(LocalDateTime.parse(dateRange.getStartDate()+"T"+LocalTime.MIN.toString()),
+                LocalDateTime.parse(dateRange.getFinalDate()+"T"+ LocalTime.MAX.toString()));
     }
 
     @PostMapping("appointment/file")
-    public ResponseEntity<byte[]> getAppointmentList(@RequestParam(name = "startDate", defaultValue = "") String startDate,
-                                                @RequestParam(name = "finalDate", defaultValue = "") String finalDate) {
+    public ResponseEntity<byte[]> getAppointmentList(@Valid @RequestBody AppointmentListQueryDTO dateRange) {
 
-        List<Appointment> appointmentList = appointmentRepository.findAllByDateTime(LocalDate.parse(startDate),LocalDate.parse(finalDate));
-        String fileName = "Lista_citas_"+startDate+"_"+finalDate;
+        List<Appointment> appointmentList = appointmentRepository.findAllByDateTime(
+                LocalDateTime.parse(dateRange.getStartDate()),LocalDateTime.parse(dateRange.getFinalDate()));
+
+        String fileName = "Lista_citas_"+dateRange.getStartDate()+"_"+dateRange.getFinalDate();
 
         byte[] contents = excelService.generateAppointmentResultFile(appointmentList);
         HttpHeaders headers = new HttpHeaders();

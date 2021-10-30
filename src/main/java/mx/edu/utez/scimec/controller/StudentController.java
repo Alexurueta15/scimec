@@ -3,6 +3,7 @@ package mx.edu.utez.scimec.controller;
 import mx.edu.utez.scimec.Bean.SuccessMessage;
 import mx.edu.utez.scimec.model.Appointment;
 import mx.edu.utez.scimec.model.DTO.AppointmentCreateDTO;
+import mx.edu.utez.scimec.model.DTO.AppointmentQueryDTO;
 import mx.edu.utez.scimec.model.DTO.StudentUpdateDTO;
 import mx.edu.utez.scimec.model.Period;
 import mx.edu.utez.scimec.model.Student;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -63,11 +65,8 @@ public class StudentController {
     }
 
     @GetMapping("appointment/available")
-    public List<LocalTime> findAllAppointmentAvailableTime(
-            @RequestParam(required = false, defaultValue = "") String date) {
-        LocalDate localDate = date == null || date.equals("") ||
-                !date.matches("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
-                ? LocalDate.now() : LocalDate.parse(date);
+    public List<LocalTime> findAllAppointmentAvailableTime(@Valid @RequestBody AppointmentQueryDTO appointmentQueryDTO) {
+        LocalDate localDate = LocalDate.parse(appointmentQueryDTO.getDate());
         Period period = periodRepository.findFirstByEnabledTrue();
         List<LocalTime> lapses = new ArrayList<>();
         if (period.getHolidays().contains(localDate)) return lapses;

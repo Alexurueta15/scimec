@@ -26,7 +26,7 @@ public class EmailService {
        helper.setText("Tu cita ha sido registrada exitosamentefecha\n" +
                "Fecha: " + appointment.getDateTime().toLocalDate().toString()
                + "\nHora: " + appointment.getDateTime().toLocalTime().toString() +
-               "GRACIAS POR USAR SCIMEC");
+               "\nGRACIAS POR USAR SCIMEC");
        new Thread(() -> mailSender.send(message)).start();
     }
 }

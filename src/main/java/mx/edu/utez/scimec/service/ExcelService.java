@@ -72,7 +72,7 @@ public class ExcelService {
                 cell.setCellStyle(cellStyle);
 
                 cell = row.createCell(5);
-                cell.setCellValue(appointment.getDateTime().toLocalDate());
+                cell.setCellValue(appointment.getDateTimeFormat());
                 cell.setCellStyle(cellStyle);
 
                 rowNumber++;
@@ -169,7 +169,7 @@ public class ExcelService {
 
             row = sheet.getRow(6);
             cell = row.getCell(7, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
-            cell.setCellValue(appointment.getDateTime().toString());
+            cell.setCellValue(appointment.getDateTimeFormat());
 
             row = sheet.getRow(8);
             cell = row.getCell(2, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
@@ -177,11 +177,8 @@ public class ExcelService {
 
             row = sheet.getRow(12);
             cell = row.getCell(0, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
-            cell.setCellValue(appointment.getPrescription().getMedicament());
-
-            row = sheet.getRow(12);
-            cell = row.getCell(0, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
-            cell.setCellValue(appointment.getPrescription().getMedicament());
+            cell.setCellValue(appointment.getPrescription().getMedicament()+"\n\n"+
+                    appointment.getPrescription().getProcedure());
 
             row = sheet.getRow(32);
             cell = row.getCell(0, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);

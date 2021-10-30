@@ -1,12 +1,12 @@
 package mx.edu.utez.scimec.controller;
 
+import mx.edu.utez.scimec.Bean.ErrorMessage;
 import mx.edu.utez.scimec.Bean.SuccessMessage;
-import mx.edu.utez.scimec.model.Announcement;
 import mx.edu.utez.scimec.model.Appointment;
-import mx.edu.utez.scimec.model.DTO.AnnouncementListAttendanceDTO;
 import mx.edu.utez.scimec.model.DTO.AppointmentUpdateDTO;
 import mx.edu.utez.scimec.model.DTO.PrescriptionAppointmentFileDTO;
 import mx.edu.utez.scimec.model.User;
+import mx.edu.utez.scimec.model.Worker;
 import mx.edu.utez.scimec.repository.AppointmentRepository;
 import mx.edu.utez.scimec.repository.UserRepository;
 import mx.edu.utez.scimec.repository.WorkerRepository;
@@ -16,10 +16,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RequestMapping("/doctor/")
@@ -41,16 +44,25 @@ public class DoctorController {
 
     @GetMapping("appointment")
     public List<Appointment> findAllAppointment() {
-        return appointmentRepository.findAllByDateTimeEquals(LocalDate.now());
+        return appointmentRepository.findAllByDateTime(
+                LocalDateTime.parse(LocalDate.now()+"T"+ LocalTime.MIN.toString()),
+                LocalDateTime.parse(LocalDate.now()+"T"+ LocalTime.MAX.toString()));
     }
 
     @PutMapping("appointment")
-    public SuccessMessage setPrescriptionAppointment(@DTO(AppointmentUpdateDTO.class)Appointment appointment){
+    public Object setPrescriptionAppointment(@DTO(AppointmentUpdateDTO.class)Appointment appointment){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         user = userRepository.findUserByUsername(user.getUsername());
-        appointment.getPrescription().setAttendedBy(workerRepository.findByUser(user));
-        appointmentRepository.save(appointment);
-        return new SuccessMessage("Prescripción agregada");
+        Worker worker = workerRepository.findByUser(user);
+        String positionWorker = worker.getPosition().toUpperCase();
+        if (positionWorker.contains("DOCTOR")){
+            appointment.getPrescription().setAttendedBy(worker);
+            appointmentRepository.save(appointment);
+            return new SuccessMessage("Prescripción agregada");
+        }else {
+            return new ErrorMessage("Empleado no autorizado");
+        }
+
     }
 
     @PostMapping("appointment/prescription")
