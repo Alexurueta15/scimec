@@ -24,7 +24,7 @@ public class ExcelService {
     public byte[] generateAppointmentResultFile(List<Appointment> appointments) {
         try {
             // 1.Lea la plantilla de Excel
-            File file = ResourceUtils.getFile(uri + "appointment.xltx");
+            File file = ResourceUtils.getFile(uri + "appointment.xlsx");
             InputStream in = new FileInputStream(file);
             XSSFWorkbook wb = new XSSFWorkbook(in);
             // 2.Lee todas las hojas en la plantilla
@@ -72,7 +72,7 @@ public class ExcelService {
                 cell.setCellStyle(cellStyle);
 
                 cell = row.createCell(5);
-                cell.setCellValue(appointment.getDateTime().toLocalDate());
+                cell.setCellValue(appointment.getDateTimeFormat());
                 cell.setCellStyle(cellStyle);
 
                 rowNumber++;
@@ -132,4 +132,78 @@ public class ExcelService {
             return null;
         }
     }
+
+    public byte[] generatePrescriptionFile(Appointment appointment) {
+        try {
+            File file = ResourceUtils.getFile(uri + "prescription.xlsx");
+            InputStream in = new FileInputStream(file);
+            XSSFWorkbook wb = new XSSFWorkbook(in);
+
+            Sheet sheet = wb.getSheetAt(0);
+
+            Row row = sheet.getRow(0);
+            Cell cell = row.getCell(1, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            String doctorName = "Dr. "+ appointment.getPrescription().getAttendedBy().getName()+ " "
+                    + appointment.getPrescription().getAttendedBy().getLastname();
+            cell.setCellValue(doctorName);
+
+            row = sheet.getRow(2);
+            cell = row.getCell(1, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue("Cédula profesional no."+appointment.getPrescription().getAttendedBy().getPID());
+
+            row = sheet.getRow(4);
+            cell = row.getCell(1, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(appointment.getStudent().getFullname());
+
+            row = sheet.getRow(4);
+            cell = row.getCell(8, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(appointment.getStudent().getGender());
+
+            row = sheet.getRow(6);
+            cell = row.getCell(1, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(appointment.getPrescription().getHeight());
+
+            row = sheet.getRow(6);
+            cell = row.getCell(4, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(appointment.getPrescription().getBloodPressure());
+
+            row = sheet.getRow(6);
+            cell = row.getCell(7, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(appointment.getDateTimeFormat());
+
+            row = sheet.getRow(8);
+            cell = row.getCell(2, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(appointment.getPrescription().getDiagnostic());
+
+            row = sheet.getRow(12);
+            cell = row.getCell(0, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(appointment.getPrescription().getMedicament()+"\n\n"+
+                    appointment.getPrescription().getProcedure());
+
+            row = sheet.getRow(32);
+            cell = row.getCell(0, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(appointment.getPrescription().getComment());
+
+            // Guardar archivo
+            FileOutputStream output = new FileOutputStream(file);
+
+            wb.write(output);
+            wb.close();
+            output.close();
+
+            Workbook workbook = new Workbook();
+            InputStream inputStream = new FileInputStream(file);
+            workbook.loadFromStream(inputStream);
+
+            File filePDF = ResourceUtils.getFile(uri + "prescription.pdf");
+            FileOutputStream outputPDF = new FileOutputStream(filePDF);
+            workbook.saveToStream(outputPDF, FileFormat.PDF);
+
+            return Files.readAllBytes(filePDF.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

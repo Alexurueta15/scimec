@@ -1,11 +1,8 @@
 package mx.edu.utez.scimec.controller;
 
 import mx.edu.utez.scimec.Bean.SuccessMessage;
-import mx.edu.utez.scimec.model.Announcement;
+import mx.edu.utez.scimec.model.*;
 import mx.edu.utez.scimec.model.DTO.*;
-import mx.edu.utez.scimec.model.Period;
-import mx.edu.utez.scimec.model.Presentation;
-import mx.edu.utez.scimec.model.Worker;
 import mx.edu.utez.scimec.repository.*;
 import mx.edu.utez.scimec.service.ExcelService;
 import mx.edu.utez.scimec.util.DTO;
@@ -13,6 +10,11 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RequestMapping("/admin/")
@@ -26,11 +28,12 @@ public class AdminController {
     private final PeriodRepository periodRepository;
     private final AnnouncementRepository announcementRepository;
     private final ExcelService excelService;
+    private final AppointmentRepository appointmentRepository;
 
     public AdminController(BCryptPasswordEncoder bCryptPasswordEncoder, WorkerRepository workerRepository,
                            UserRepository userRepository, PresentationRepository presentationRepository,
                            PeriodRepository periodRepository, AnnouncementRepository announcementRepository,
-                           ExcelService excelService) {
+                           ExcelService excelService, AppointmentRepository appointmentRepository) {
         this.workerRepository = workerRepository;
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -38,6 +41,7 @@ public class AdminController {
         this.periodRepository = periodRepository;
         this.announcementRepository = announcementRepository;
         this.excelService = excelService;
+        this.appointmentRepository = appointmentRepository;
     }
 
     //CRUD WORKER
@@ -77,8 +81,8 @@ public class AdminController {
     }
 
     @DeleteMapping("presentation")
-    public SuccessMessage deletePresentation(@DTO(PresentationDeleteDTO.class) Presentation presentation) {
-        if (presentationRepository.existsById(presentation.getId())) presentationRepository.deleteById(presentation.getId());
+    public SuccessMessage deletePresentation(@RequestBody @NotEmpty String id) {
+        if (presentationRepository.existsById(id)) presentationRepository.deleteById(id);
         return new SuccessMessage("Imagen de presentación eliminada");
     }
 
@@ -141,6 +145,29 @@ public class AdminController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("inline", announcement.getName() + ".pdf");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+        return new ResponseEntity<>(contents, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("appointment")
+    public List<Appointment> findAllAppointment(@Valid @RequestBody AppointmentListQueryDTO dateRange) {
+
+        return appointmentRepository.findAllByDateTime(LocalDateTime.parse(dateRange.getStartDate()+"T"+LocalTime.MIN.toString()),
+                LocalDateTime.parse(dateRange.getFinalDate()+"T"+ LocalTime.MAX.toString()));
+    }
+
+    @PostMapping("appointment/file")
+    public ResponseEntity<byte[]> getAppointmentList(@Valid @RequestBody AppointmentListQueryDTO dateRange) {
+
+        List<Appointment> appointmentList = appointmentRepository.findAllByDateTime(
+                LocalDateTime.parse(dateRange.getStartDate()),LocalDateTime.parse(dateRange.getFinalDate()));
+
+        String fileName = "Lista_citas_"+dateRange.getStartDate()+"_"+dateRange.getFinalDate();
+
+        byte[] contents = excelService.generateAppointmentResultFile(appointmentList);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.setContentDispositionFormData("inline", fileName + ".xlsx");
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }
