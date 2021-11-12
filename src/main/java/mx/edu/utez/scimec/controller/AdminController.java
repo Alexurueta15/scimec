@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -45,7 +44,6 @@ public class AdminController {
     }
 
     //CRUD WORKER
-
     @PostMapping("worker")
     public SuccessMessage saveWorker(@DTO(WorkerCreateDTO.class) Worker worker) {
         worker.getUser().setPassword(bCryptPasswordEncoder.encode(worker.getUser().getPassword()));
@@ -149,7 +147,7 @@ public class AdminController {
         return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }
 
-    @GetMapping("appointment")
+    @PostMapping("appointment")
     public List<Appointment> findAllAppointment(@Valid @RequestBody AppointmentListQueryDTO dateRange) {
 
         return appointmentRepository.findAllByDateTime(LocalDateTime.parse(dateRange.getStartDate()+"T"+LocalTime.MIN.toString()),
@@ -160,7 +158,8 @@ public class AdminController {
     public ResponseEntity<byte[]> getAppointmentList(@Valid @RequestBody AppointmentListQueryDTO dateRange) {
 
         List<Appointment> appointmentList = appointmentRepository.findAllByDateTime(
-                LocalDateTime.parse(dateRange.getStartDate()),LocalDateTime.parse(dateRange.getFinalDate()));
+                LocalDateTime.parse(dateRange.getStartDate()+"T"+LocalTime.MIN.toString()),
+                LocalDateTime.parse(dateRange.getFinalDate()));
 
         String fileName = "Lista_citas_"+dateRange.getStartDate()+"_"+dateRange.getFinalDate();
 

@@ -68,7 +68,9 @@ public class ExcelService {
                 cell.setCellStyle(cellStyle);
 
                 cell = row.createCell(4);
-                cell.setCellValue(appointment.getPrescription().getDiagnostic());
+                String diagnostic = appointment.getPrescription() == null ? "Sin diagnóstico" :
+                        appointment.getPrescription().getDiagnostic();
+                cell.setCellValue(diagnostic);
                 cell.setCellStyle(cellStyle);
 
                 cell = row.createCell(5);
