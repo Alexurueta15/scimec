@@ -150,18 +150,19 @@ public class AdminController {
     @PostMapping("appointment")
     public List<Appointment> findAllAppointment(@Valid @RequestBody AppointmentListQueryDTO dateRange) {
 
-        return appointmentRepository.findAllByDateTime(LocalDateTime.parse(dateRange.getStartDate()+"T"+LocalTime.MIN.toString()),
-                LocalDateTime.parse(dateRange.getFinalDate()+"T"+ LocalTime.MAX.toString()));
+        return appointmentRepository.findAllByDateTime(
+                LocalDateTime.parse(dateRange.getStartDate() + "T" + LocalTime.MIN.toString()),
+                LocalDateTime.parse(dateRange.getFinalDate() + "T" + LocalTime.MAX.toString()));
     }
 
     @PostMapping("appointment/file")
     public ResponseEntity<byte[]> getAppointmentList(@Valid @RequestBody AppointmentListQueryDTO dateRange) {
 
         List<Appointment> appointmentList = appointmentRepository.findAllByDateTime(
-                LocalDateTime.parse(dateRange.getStartDate()+"T"+LocalTime.MIN.toString()),
-                LocalDateTime.parse(dateRange.getFinalDate()));
+                LocalDateTime.parse(dateRange.getStartDate() + "T" + LocalTime.MIN.toString()),
+                LocalDateTime.parse(dateRange.getFinalDate() + "T" + LocalTime.MAX.toString()));
 
-        String fileName = "Lista_citas_"+dateRange.getStartDate()+"_"+dateRange.getFinalDate();
+        String fileName = "Lista_citas_" + dateRange.getStartDate() + "_" + dateRange.getFinalDate();
 
         byte[] contents = excelService.generateAppointmentResultFile(appointmentList);
         HttpHeaders headers = new HttpHeaders();
