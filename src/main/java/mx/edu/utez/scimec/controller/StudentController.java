@@ -100,7 +100,7 @@ public class StudentController {
     @GetMapping("period/active")
     public Period findPeriodActive() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Student student = studentRepository.findByUser(user);
+        Student student = studentRepository.findByUser(userRepository.findUserByUsername(user.getUsername()));
         Period period = periodRepository.findFirstByEnabledTrue();
         period.getAppointments().removeIf(appointment -> !Objects.equals(appointment.getStudent().getId(), student.getId()));
         return period;
@@ -109,7 +109,7 @@ public class StudentController {
     @GetMapping("period")
     public List<Period> findAll() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Student student = studentRepository.findByUser(user);
+        Student student = studentRepository.findByUser(userRepository.findUserByUsername(user.getUsername()));
         List<Period> periods = periodRepository.findAll();
         periods.forEach(period -> {
             period.getAppointments().removeIf(appointment -> !Objects.equals(appointment.getStudent().getId(), student.getId()));
