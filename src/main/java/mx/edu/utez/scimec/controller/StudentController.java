@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RequestMapping("/student/")
 @RestController
@@ -94,5 +95,25 @@ public class StudentController {
     @GetMapping("appointment")
     public List<Appointment> findAllAppointment() {
         return appointmentRepository.findAllByStudent(getProfile());
+    }
+
+    @GetMapping("period/active")
+    public Period findPeriodActive() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Student student = studentRepository.findByUser(user);
+        Period period = periodRepository.findFirstByEnabledTrue();
+        period.getAppointments().removeIf(appointment -> !Objects.equals(appointment.getStudent().getId(), student.getId()));
+        return period;
+    }
+
+    @GetMapping("period")
+    public List<Period> findAll() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Student student = studentRepository.findByUser(user);
+        List<Period> periods = periodRepository.findAll();
+        periods.forEach(period -> {
+            period.getAppointments().removeIf(appointment -> !Objects.equals(appointment.getStudent().getId(), student.getId()));
+        });
+        return periods;
     }
 }
