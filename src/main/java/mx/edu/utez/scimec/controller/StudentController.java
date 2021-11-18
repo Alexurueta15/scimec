@@ -65,8 +65,12 @@ public class StudentController {
     }
 
     @GetMapping("appointment/available")
-    public List<LocalTime> findAllAppointmentAvailableTime(@Valid @RequestBody AppointmentQueryDTO appointmentQueryDTO) {
-        LocalDate localDate = LocalDate.parse(appointmentQueryDTO.getDate());
+    public List<LocalTime> findAllAppointmentAvailableTime(@RequestParam(defaultValue = "") String date) {
+        LocalDate localDate;
+        if (date.isEmpty() || !date.matches("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"))
+            localDate = LocalDate.now();
+        else
+            localDate = LocalDate.parse(date);
         Period period = periodRepository.findFirstByEnabledTrue();
         List<LocalTime> lapses = new ArrayList<>();
         if (period.getHolidays().contains(localDate)) return lapses;
