@@ -21,7 +21,7 @@ public class ExcelService {
 
     private final String uri = ResourceUtils.CLASSPATH_URL_PREFIX + "templates/";
 
-    public byte[] generateAppointmentResultFile(List<Appointment> appointments) {
+    public byte[] generateAppointmentResultFile(List<Appointment> appointments, String dateRange) {
         try {
             // 1.Lea la plantilla de Excel
             File file = ResourceUtils.getFile(uri + "appointment.xlsx");
@@ -36,17 +36,22 @@ public class ExcelService {
             XSSFCell cell;
             XSSFCellStyle cellStyle = wb.createCellStyle();
 
+            row = sheet.getRow(1);
+
+            cell = row.getCell(1, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            cell.setCellValue(dateRange);
+
             //Crear estilo de las filas
             cellStyle.setBorderBottom(BorderStyle.THIN);
             cellStyle.setBorderLeft(BorderStyle.THIN);
             cellStyle.setBorderRight(BorderStyle.THIN);
             cellStyle.setBorderTop(BorderStyle.THIN);
 
-            int rowNumber = 3;
+            int rowNumber = 4;
             for (Appointment appointment : appointments) {
 
-                row = sheet.createRow(rowNumber);
-
+                row = sheet.getRow(rowNumber);
+                System.out.println("row number: "+rowNumber);
                 cell = row.createCell(0);
                 cell.setCellValue(appointment.getStudent().getFullname());
                 cell.setCellStyle(cellStyle);

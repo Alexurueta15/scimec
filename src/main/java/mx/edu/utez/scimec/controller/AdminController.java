@@ -162,12 +162,12 @@ public class AdminController {
                 LocalDateTime.parse(dateRange.getStartDate() + "T" + LocalTime.MIN.toString()),
                 LocalDateTime.parse(dateRange.getFinalDate() + "T" + LocalTime.MAX.toString()));
 
-        String fileName = "Lista_citas_" + dateRange.getStartDate() + "_" + dateRange.getFinalDate();
+        String range = dateRange.getStartDate() + "_" + dateRange.getFinalDate();
 
-        byte[] contents = excelService.generateAppointmentResultFile(appointmentList);
+        byte[] contents = excelService.generateAppointmentResultFile(appointmentList, range);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.setContentDispositionFormData("inline", fileName + ".xlsx");
+        headers.setContentDispositionFormData("inline", "Lista_citas_" + range + ".xlsx");
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         return new ResponseEntity<>(contents, headers, HttpStatus.OK);
     }
