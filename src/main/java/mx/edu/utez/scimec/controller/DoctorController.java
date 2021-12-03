@@ -44,9 +44,7 @@ public class DoctorController {
 
     @GetMapping("appointment")
     public List<Appointment> findAllAppointment() {
-        return appointmentRepository.findAllByDateTime(
-                LocalDateTime.parse(LocalDate.now()+"T"+ LocalTime.MIN.toString()),
-                LocalDateTime.parse(LocalDate.now()+"T"+ LocalTime.MAX.toString()));
+        return appointmentRepository.findAll();
     }
 
     @PutMapping("appointment")
