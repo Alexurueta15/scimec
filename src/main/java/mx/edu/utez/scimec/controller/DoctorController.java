@@ -5,6 +5,7 @@ import mx.edu.utez.scimec.Bean.SuccessMessage;
 import mx.edu.utez.scimec.model.Appointment;
 import mx.edu.utez.scimec.model.DTO.AppointmentUpdateDTO;
 import mx.edu.utez.scimec.model.DTO.PrescriptionAppointmentFileDTO;
+import mx.edu.utez.scimec.model.Student;
 import mx.edu.utez.scimec.model.User;
 import mx.edu.utez.scimec.model.Worker;
 import mx.edu.utez.scimec.repository.AppointmentRepository;
@@ -40,6 +41,13 @@ public class DoctorController {
         this.userRepository = userRepository;
         this.workerRepository = workerRepository;
         this.excelService = excelService;
+    }
+
+    @GetMapping("profile")
+    public Worker getProfile() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        user = userRepository.findUserByUsername(user.getUsername());
+        return workerRepository.findByUser(user);
     }
 
     @GetMapping("appointment")
